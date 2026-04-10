@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SymbioAI – Urban Sustainability Through AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Fraunces:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f0a;
+    --surface: #0f1a0f;
+    --surface2: #162116;
+    --accent: #a8ff78;
+    --accent2: #78ffd6;
+    --accent3: #d4ff47;
+    --muted: #4a6b4a;
+    --text: #e8f5e8;
+    --text-dim: #8aaa8a;
+    --border: rgba(168,255,120,0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s ease, opacity 0.2s;
+    mix-blend-mode: exclusion;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.15s ease;
+    mix-blend-mode: exclusion;
+  }
+
+  /* Grid noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M 60 0 L 0 0 0 60' fill='none' stroke='rgba(168,255,120,0.03)' stroke-width='1'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.4rem 3rem;
+    background: rgba(10,15,10,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: -0.03em;
+    color: var(--accent);
+  }
+  .nav-logo span { color: var(--text-dim); font-weight: 400; }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta {
+    background: var(--accent);
+    color: #0a0f0a;
+    border: none;
+    padding: 0.55rem 1.4rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    cursor: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .nav-cta:hover { background: var(--accent3); transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 8rem 3rem 4rem;
+    position: relative;
+    overflow: hidden;
+    gap: 4rem;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 70% at 70% 50%, rgba(168,255,120,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 50% at 20% 80%, rgba(120,255,214,0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-orb {
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(168,255,120,0.06) 0%, transparent 70%);
+    top: 50%; right: 5%;
+    transform: translateY(-50%);
+    animation: pulse 6s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: translateY(-50%) scale(1); opacity: 0.6; }
+    50% { transform: translateY(-50%) scale(1.08); opacity: 1; }
+  }
+
+  .hero-content { position: relative; z-index: 1; }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--border);
+    padding: 0.35rem 0.9rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 2rem;
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: blink 1.5s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.8rem, 5vw, 5rem);
+    line-height: 1.0;
+    letter-spacing: -0.04em;
+    color: var(--text);
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+  .hero h1 .green { color: var(--accent); }
+  .hero h1 .italic { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; color: var(--accent2); }
+
+  .hero-sub {
+    margin-top: 1.8rem;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    line-height: 1.8;
+    max-width: 480px;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0a0f0a;
+    border: none;
+    padding: 0.85rem 2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+    cursor: none;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent3);
+    transform: translateX(-101%);
+    transition: transform 0.3s ease;
+  }
+  .btn-primary:hover::after { transform: translateX(0); }
+  .btn-primary span { position: relative; z-index: 1; }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 0.85rem 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    cursor: none;
+    transition: all 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Symbiosis diagram */
+  .hero-visual {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 1.2s 0.4s ease both;
+  }
+  .symbiosis-ring {
+    position: relative;
+    width: 380px;
+    height: 380px;
+  }
+  .ring-outer {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(168,255,120,0.2);
+    border-radius: 50%;
+    animation: rotateRing 20s linear infinite;
+  }
+  .ring-mid {
+    position: absolute;
+    inset: 50px;
+    border: 1px dashed rgba(120,255,214,0.2);
+    border-radius: 50%;
+    animation: rotateRing 14s linear infinite reverse;
+  }
+  .ring-inner {
+    position: absolute;
+    inset: 110px;
+    border: 1px solid rgba(212,255,71,0.15);
+    border-radius: 50%;
+    animation: rotateRing 8s linear infinite;
+  }
+  @keyframes rotateRing { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+  .ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .ring-center-icon {
+    font-size: 2.4rem;
+    animation: pulse 3s ease-in-out infinite;
+  }
+  .ring-center-label {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-top: 0.4rem;
+  }
+
+  .ring-node {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    transform: translate(-50%, -50%);
+  }
+  .node-icon {
+    width: 44px; height: 44px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    border-radius: 8px;
+  }
+  .node-label {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* Animated connecting lines */
+  .flow-line {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    height: 1px;
+    animation: flowPulse 2s ease-in-out infinite;
+  }
+  @keyframes flowPulse { 0%,100%{opacity:0.2} 50%{opacity:0.8} }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  /* STATS BAR */
+  .stats-bar {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    background: var(--surface);
+    position: relative;
+    z-index: 2;
+  }
+  .stat-item {
+    flex: 1;
+    padding: 1.8rem 2rem;
+    border-right: 1px solid var(--border);
+    transition: background 0.2s;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-item:hover { background: var(--surface2); }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    margin-top: 0.4rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* HOW IT WORKS */
+  .section {
+    padding: 7rem 3rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-tag {
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .section-tag::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 3.5vw, 3.2rem);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    max-width: 600px;
+    margin-bottom: 1rem;
+  }
+  .section-title .italic { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; color: var(--accent2); }
+
+  .section-desc {
+    color: var(--text-dim);
+    font-size: 0.88rem;
+    line-height: 1.9;
+    max-width: 540px;
+    margin-bottom: 4rem;
+  }
+
+  /* Steps */
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .step-card {
+    background: var(--surface);
+    padding: 2.5rem 1.8rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .step-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .step-card:hover { background: var(--surface2); }
+  .step-card:hover::before { transform: scaleX(1); }
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: rgba(168,255,120,0.08);
+    line-height: 1;
+    margin-bottom: 1rem;
+    transition: color 0.3s;
+  }
+  .step-card:hover .step-num { color: rgba(168,255,120,0.15); }
+  .step-icon { font-size: 1.8rem; margin-bottom: 1rem; }
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.7rem;
+    color: var(--text);
+  }
+  .step-desc { font-size: 0.8rem; color: var(--text-dim); line-height: 1.7; }
+
+  /* RESOURCES */
+  .resources-section { background: var(--surface); }
+  .resources-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .resource-card {
+    border: 1px solid var(--border);
+    padding: 2rem;
+    background: var(--bg);
+    position: relative;
+    transition: all 0.3s;
+    cursor: none;
+  }
+  .resource-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 30px rgba(168,255,120,0.05);
+  }
+  .resource-icon {
+    font-size: 2.2rem;
+    margin-bottom: 1.2rem;
+  }
+  .resource-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: 0.6rem;
+    color: var(--text);
+  }
+  .resource-desc { font-size: 0.8rem; color: var(--text-dim); line-height: 1.7; margin-bottom: 1.5rem; }
+  .resource-tag {
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    border: 1px solid var(--border);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  /* AI ENGINE */
+  .ai-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+  .ai-terminal {
+    background: #080d08;
+    border: 1px solid var(--border);
+    font-size: 0.8rem;
+    line-height: 1.8;
+    overflow: hidden;
+  }
+  .terminal-header {
+    background: var(--surface2);
+    padding: 0.7rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .terminal-title { font-size: 0.72rem; color: var(--text-dim); margin-left: 0.5rem; letter-spacing: 0.05em; }
+  .terminal-body { padding: 1.5rem; }
+  .t-line { margin-bottom: 0.4rem; }
+  .t-prompt { color: var(--accent); }
+  .t-cmd { color: var(--text); }
+  .t-output { color: var(--text-dim); padding-left: 1rem; }
+  .t-match { color: var(--accent2); }
+  .t-value { color: var(--accent3); }
+  .t-cursor {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: var(--accent);
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+
+  .ai-features { display: flex; flex-direction: column; gap: 2rem; }
+  .ai-feature {
+    display: flex;
+    gap: 1.2rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    transition: all 0.3s;
+    cursor: none;
+  }
+  .ai-feature:hover { border-color: rgba(168,255,120,0.35); background: var(--surface2); }
+  .ai-feature-icon {
+    font-size: 1.6rem;
+    width: 48px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-start;
+    padding-top: 2px;
+  }
+  .ai-feature-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+  }
+  .ai-feature-desc { font-size: 0.78rem; color: var(--text-dim); line-height: 1.7; }
+
+  /* IMPACT */
+  .impact-section { background: var(--surface); }
+  .impact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 3rem;
+  }
+  .impact-card {
+    background: var(--bg);
+    padding: 2.5rem;
+    transition: background 0.3s;
+  }
+  .impact-card:hover { background: var(--surface2); }
+  .impact-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .impact-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 0.6rem;
+  }
+  .impact-desc { font-size: 0.8rem; color: var(--text-dim); line-height: 1.7; }
+  .impact-metric {
+    margin-top: 1.2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.8rem;
+    color: var(--accent);
+  }
+
+  /* CTA */
+  .cta-section {
+    text-align: center;
+    padding: 8rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(168,255,120,0.06) 0%, transparent 70%);
+  }
+  .cta-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  .cta-section p {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    line-height: 1.8;
+    max-width: 480px;
+    margin: 0 auto 3rem;
+    position: relative;
+  }
+  .cta-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    padding: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--accent);
+  }
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .footer-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+  .footer-copy {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  /* Scroll animations */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Responsive */
+  @media(max-width: 1024px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-visual { display: none; }
+    .steps-grid { grid-template-columns: repeat(2, 1fr); }
+    .ai-section { grid-template-columns: 1fr; }
+    .resources-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media(max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { padding: 7rem 1.5rem 3rem; }
+    .section { padding: 4rem 1.5rem; }
+    .stats-bar { flex-wrap: wrap; }
+    .stat-item { border-right: none; border-bottom: 1px solid var(--border); min-width: 50%; }
+    .steps-grid { grid-template-columns: 1fr; }
+    .resources-grid { grid-template-columns: 1fr; }
+    .impact-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Symbio<span>AI</span></div>
+  <ul class="nav-links">
+    <li><a href="#how">How it Works</a></li>
+    <li><a href="#resources">Resources</a></li>
+    <li><a href="#ai">AI Engine</a></li>
+    <li><a href="#impact">Impact</a></li>
+  </ul>
+  <button class="nav-cta">Join Platform →</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-orb"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">AI-Powered Circular Economy</div>
+    <h1>
+      Urban<br>
+      <span class="green">Waste</span> becomes<br>
+      <span class="italic">someone's</span> resource
+    </h1>
+    <p class="hero-sub">
+      SymbioAI connects businesses, institutions, and individuals to exchange underutilized resources—transforming excess into value through intelligent industrial symbiosis.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary"><span>Start Exchanging →</span></button>
+      <button class="btn-outline">Watch Demo</button>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="symbiosis-ring">
+      <div class="ring-outer"></div>
+      <div class="ring-mid"></div>
+      <div class="ring-inner"></div>
+
+      <!-- Center -->
+      <div class="ring-center">
+        <div class="ring-center-icon">🧬</div>
+        <div class="ring-center-label">SymbioAI</div>
+      </div>
+
+      <!-- Nodes positioned around the ring -->
+      <div class="ring-node" style="top:8%;left:50%">
+        <div class="node-icon">🌡️</div>
+        <div class="node-label">Heat</div>
+      </div>
+      <div class="ring-node" style="top:30%;left:92%">
+        <div class="node-icon">💧</div>
+        <div class="node-label">Water</div>
+      </div>
+      <div class="ring-node" style="top:72%;left:85%">
+        <div class="node-icon">⚡</div>
+        <div class="node-label">Energy</div>
+      </div>
+      <div class="ring-node" style="top:92%;left:50%">
+        <div class="node-icon">🥗</div>
+        <div class="node-label">Food</div>
+      </div>
+      <div class="ring-node" style="top:72%;left:15%">
+        <div class="node-icon">♻️</div>
+        <div class="node-label">Materials</div>
+      </div>
+      <div class="ring-node" style="top:30%;left:8%">
+        <div class="node-icon">🏭</div>
+        <div class="node-label">Industry</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num">94%</div>
+    <div class="stat-label">Waste Reduction Rate</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">12k+</div>
+    <div class="stat-label">Active Exchanges</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">340+</div>
+    <div class="stat-label">Cities Connected</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">€2.1B</div>
+    <div class="stat-label">Value Unlocked</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="section-tag">Process</div>
+  <h2 class="section-title">How <span class="italic">symbiosis</span> works</h2>
+  <p class="section-desc">Four intelligent steps transform urban waste streams into regenerative resource loops—automatically, continuously, and at city scale.</p>
+
+  <div class="steps-grid reveal">
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <div class="step-icon">📡</div>
+      <div class="step-title">Declare Resources</div>
+      <div class="step-desc">Businesses and institutions log their excess outputs—surplus heat, food, water, or materials—through our simple onboarding interface.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <div class="step-icon">🤖</div>
+      <div class="step-title">AI Matching</div>
+      <div class="step-desc">Our engine analyzes output profiles, proximity, timing, and demand across the entire urban network to find optimal exchange pairings.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <div class="step-icon">🤝</div>
+      <div class="step-title">Smart Exchange</div>
+      <div class="step-desc">Matched parties receive connection proposals with logistics, pricing suggestions, and compliance checks—ready to act in one click.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">04</div>
+      <div class="step-icon">📊</div>
+      <div class="step-title">Track Impact</div>
+      <div class="step-desc">Real-time dashboards show CO₂ avoided, cost savings, and circular economy contribution scores across every exchange completed.</div>
+    </div>
+  </div>
+</section>
+
+<!-- RESOURCES -->
+<section class="section resources-section" id="resources">
+  <div class="section-tag">Resource Types</div>
+  <h2 class="section-title">Every kind of <span class="italic">urban output</span></h2>
+  <p class="section-desc">SymbioAI handles the full spectrum of underutilized resources that flow through modern cities every day.</p>
+
+  <div class="resources-grid reveal">
+    <div class="resource-card">
+      <div class="resource-icon">🥗</div>
+      <div class="resource-name">Surplus Food</div>
+      <div class="resource-desc">Connect restaurants, caterers, and supermarkets with food banks, urban farms, and composting facilities before expiry.</div>
+      <div class="resource-tag">Perishable</div>
+    </div>
+    <div class="resource-card">
+      <div class="resource-icon">🌡️</div>
+      <div class="resource-name">Waste Heat</div>
+      <div class="resource-desc">Capture thermal energy from data centers, factories, and cooling systems and route it to district heating networks.</div>
+      <div class="resource-tag">Thermal</div>
+    </div>
+    <div class="resource-card">
+      <div class="resource-icon">💧</div>
+      <div class="resource-name">Water Streams</div>
+      <div class="resource-desc">Redirect greywater, rainwater, and industrial effluent to appropriate secondary uses—irrigation, cleaning, or industrial cooling.</div>
+      <div class="resource-tag">Hydrological</div>
+    </div>
+    <div class="resource-card">
+      <div class="resource-icon">⚡</div>
+      <div class="resource-name">Excess Energy</div>
+      <div class="resource-desc">Balance solar, wind, and grid surplus across the urban network, enabling peer-to-peer clean energy trading in real time.</div>
+      <div class="resource-tag">Renewable</div>
+    </div>
+    <div class="resource-card">
+      <div class="resource-icon">🧱</div>
+      <div class="resource-name">Raw Materials</div>
+      <div class="resource-desc">Match industrial byproducts, offcuts, and packaging waste with manufacturers who can integrate them as direct inputs.</div>
+      <div class="resource-tag">Industrial</div>
+    </div>
+    <div class="resource-card">
+      <div class="resource-icon">🏗️</div>
+      <div class="resource-name">Space & Equipment</div>
+      <div class="resource-desc">Share idle facilities, vehicles, machinery, and infrastructure across organizations to maximize asset utilization rates.</div>
+      <div class="resource-tag">Physical Asset</div>
+    </div>
+  </div>
+</section>
+
+<!-- AI ENGINE -->
+<section class="section" id="ai">
+  <div class="ai-section">
+    <div class="reveal">
+      <div class="section-tag">Intelligence Layer</div>
+      <h2 class="section-title">The <span class="italic">AI engine</span> at the core</h2>
+      <p class="section-desc">SymbioAI's matching intelligence operates continuously across millions of data points, learning from every exchange to surface opportunities humans would never see.</p>
+
+      <div class="ai-features">
+        <div class="ai-feature">
+          <div class="ai-feature-icon">🧠</div>
+          <div>
+            <div class="ai-feature-title">Symbiosis Pattern Recognition</div>
+            <div class="ai-feature-desc">Learns from global industrial ecology data to identify non-obvious exchange opportunities across different sectors and geographies.</div>
+          </div>
+        </div>
+        <div class="ai-feature">
+          <div class="ai-feature-icon">⏱️</div>
+          <div>
+            <div class="ai-feature-title">Temporal Demand Forecasting</div>
+            <div class="ai-feature-desc">Predicts when resources will become available or needed, enabling proactive matchmaking before waste even occurs.</div>
+          </div>
+        </div>
+        <div class="ai-feature">
+          <div class="ai-feature-icon">📍</div>
+          <div>
+            <div class="ai-feature-title">Logistics & Proximity Scoring</div>
+            <div class="ai-feature-desc">Factors in transport emissions, cost, and feasibility to ensure exchanges deliver genuine net environmental value.</div>
+          </div>
+        </div>
+        <div class="ai-feature">
+          <div class="ai-feature-icon">🔄</div>
+          <div>
+            <div class="ai-feature-title">Cascade Chain Detection</div>
+            <div class="ai-feature-desc">Identifies multi-hop symbiosis chains where one resource flows through several entities before its final highest-value use.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-terminal reveal">
+      <div class="terminal-header">
+        <div class="terminal-dot" style="background:#ff5f57"></div>
+        <div class="terminal-dot" style="background:#ffbd2e"></div>
+        <div class="terminal-dot" style="background:#28c840"></div>
+        <div class="terminal-title">symbioai — matchmaker v3.1.0</div>
+      </div>
+      <div class="terminal-body">
+        <div class="t-line"><span class="t-prompt">⟩ </span><span class="t-cmd">scan --city=berlin --mode=realtime</span></div>
+        <div class="t-line"><span class="t-output">Scanning 4,281 resource nodes...</span></div>
+        <div class="t-line"><span class="t-output">Loading demand forecasts ✓</span></div>
+        <div class="t-line">&nbsp;</div>
+        <div class="t-line"><span class="t-prompt">⟩ </span><span class="t-cmd">match --type=heat --threshold=0.82</span></div>
+        <div class="t-line"><span class="t-output">🔍 Analyzing thermal profiles...</span></div>
+        <div class="t-line"><span class="t-output">Match found: <span class="t-match">ServerFarm_Mitte → District_Heat_7</span></span></div>
+        <div class="t-line"><span class="t-output">  Score: <span class="t-value">0.94</span> | Distance: <span class="t-value">1.2km</span> | Savings: <span class="t-value">€18k/yr</span></span></div>
+        <div class="t-line"><span class="t-output">  CO₂ avoided: <span class="t-value">42 tonnes/year</span></span></div>
+        <div class="t-line">&nbsp;</div>
+        <div class="t-line"><span class="t-prompt">⟩ </span><span class="t-cmd">chain --detect --cascade=3</span></div>
+        <div class="t-line"><span class="t-output">Cascade: <span class="t-match">Brewery → Urban_Farm → FoodBank_K</span></span></div>
+        <div class="t-line"><span class="t-output">  Efficiency: <span class="t-value">91%</span> | Loop closed ✓</span></div>
+        <div class="t-line">&nbsp;</div>
+        <div class="t-line"><span class="t-prompt">⟩ </span><span class="t-cmd">_<span class="t-cursor"></span></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="section impact-section" id="impact">
+  <div class="section-tag">Environmental Impact</div>
+  <h2 class="section-title">Measurable <span class="italic">planetary</span> benefit</h2>
+  <p class="section-desc">Every exchange on SymbioAI creates quantified environmental and economic value—tracked, verified, and reported automatically.</p>
+
+  <div class="impact-grid reveal">
+    <div class="impact-card">
+      <div class="impact-icon">🌍</div>
+      <div class="impact-title">Carbon Displacement</div>
+      <div class="impact-desc">By replacing virgin resource extraction with waste-derived inputs, each exchange directly displaces emissions at the source.</div>
+      <div class="impact-metric">−1.2M t CO₂</div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-icon">💰</div>
+      <div class="impact-title">Economic Value Created</div>
+      <div class="impact-desc">Participants save on disposal costs while gaining affordable inputs—creating a genuine win-win economic loop at city scale.</div>
+      <div class="impact-metric">€2.1B unlocked</div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-icon">💧</div>
+      <div class="impact-title">Water Recirculated</div>
+      <div class="impact-desc">Millions of litres of industrial and grey water are redirected annually to secondary uses, relieving pressure on municipal supply.</div>
+      <div class="impact-metric">4.8B L/year</div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-icon">🏙️</div>
+      <div class="impact-title">Resilient Urban Metabolism</div>
+      <div class="impact-desc">Cities on SymbioAI develop genuine circular metabolisms—reducing vulnerability to supply chain shocks and resource scarcity.</div>
+      <div class="impact-metric">340 cities</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-bg"></div>
+  <h2>Ready to turn your<br><span style="color:var(--accent)">waste into wealth?</span></h2>
+  <p>Join thousands of businesses, municipalities, and institutions already building a circular urban economy with SymbioAI.</p>
+  <div class="cta-actions">
+    <button class="btn-primary"><span>Get Started Free →</span></button>
+    <button class="btn-outline">Schedule a Demo</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">SymbioAI</div>
+  <ul class="footer-links">
+    <li><a href="#">Platform</a></li>
+    <li><a href="#">API</a></li>
+    <li><a href="#">Cities</a></li>
+    <li><a href="#">Research</a></li>
+    <li><a href="#">Privacy</a></li>
+  </ul>
+  <div class="footer-copy">© 2026 SymbioAI. Building the circular city.</div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx - 6 + 'px';
+    cursor.style.top = my - 6 + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx - 18 + 'px';
+    ring.style.top = ry - 18 + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('button, a').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'scale(2)';
+      ring.style.transform = 'scale(0.5)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'scale(1)';
+      ring.style.transform = 'scale(1)';
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => observer.observe(r));
+
+  // Animated counter for stats
+  function animateCounter(el, target, suffix) {
+    let start = 0;
+    const duration = 1800;
+    const step = timestamp => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const val = progress * target;
+      el.textContent = (val >= 1000 ? (val/1000).toFixed(1) + 'k' : Math.floor(val)) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  const statsObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        statsObserver.unobserve(e.target);
+        const items = e.target.querySelectorAll('.stat-num');
+        const data = [
+          { target: 94, suffix: '%' },
+          { target: 12000, suffix: '+' },
+          { target: 340, suffix: '+' },
+          { target: 2.1, suffix: 'B' }
+        ];
+        items.forEach((item, i) => {
+          if (i === 3) {
+            // Euro special
+            let s = 0;
+            const dur = 1800, t0 = performance.now();
+            const step = ts => {
+              const p = Math.min((ts - t0)/dur, 1);
+              item.textContent = '€' + (p * 2.1).toFixed(1) + 'B';
+              if (p < 1) requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+          } else {
+            animateCounter(item, data[i].target, data[i].suffix);
+          }
+        });
+      }
+    });
+  }, { threshold: 0.5 });
+  statsObserver.observe(document.querySelector('.stats-bar'));
+</script>
+</body>
+</html>
